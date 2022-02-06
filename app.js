@@ -1,13 +1,15 @@
 const express = require('express');
 const languageTranslator = require('./translator');
 const app = express();
+const cors = require('cors');
+
+app.use(cors());
 
 
 app.get('/languages', (req, res) => {
 
     languageTranslator.listLanguages()
         .then(langs => {
-            console.log("Languages Requested");
             res.send(langs.result.languages);
         })
         .catch(err => {
@@ -21,12 +23,12 @@ app.get('/translate', (req, res) => {
 
     var translateParams = {
         text: req.query.text,
-        modelId: req.query.from + '-' + req.query.to
+        modelId: req.query.modelId
     };
 
     languageTranslator.translate(translateParams)
         .then(translation => {
-            res.send(translation.result.translations[0].translation);
+            res.send(translation.result);
         })
         .catch(err => {
             console.log('error:', err);
